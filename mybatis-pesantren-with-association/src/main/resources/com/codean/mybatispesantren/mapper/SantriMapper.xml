@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.mybatispesantren.mapper.SantriMapper">
+
+    <resultMap id="SantriResultMap" type="Santri">
+        <id column="id" property="id"/>
+        <result column="nama_santri" property="nama" />
+        <result column="umur" property="umur" />
+        <result column="kelas" property="kelas"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+    </resultMap>
+
+    <resultMap id="SantriDetailedMap" type="Santri">
+
+        <result property="id" column="id"/>
+        <result property="nama" column="nama_santri"/>
+        <result property="umur" column="umur"/>
+        <result property="kelas" column="kelas"/>
+        <collection property="listKegiatan" column="id" javaType="List"
+                    select="com.codean.mybatispesantren.mapper.KegiatanMapper.findSantriById"/>
+    </resultMap>
+
+    <select id="findDetailedSantri" resultMap="SantriDetailedMap">
+        SELECT s.id, s.nama_santri, s.umur, s.kelas, k.id, k.nama_kegiatan
+        FROM santri s
+        LEFT JOIN presensi pk
+        ON s.id = pk.id
+        LEFT JOIN kegiatan k
+        ON pk.id= k.id
+        WHERE s.id = #{id}
+        LIMIT 1
+    </select>
+
+    <resultMap id="SantriSimpleResultMap" type="Santri">
+        <result property = "nama" column = "nama" />
+        <result property = "umur" column = "umur"/>
+        <result property = "kelas" column = "kelas"/>
+    </resultMap>
+
+    <select id="findKegiatanById" resultMap="SantriSimpleResultMap">
+        select s.nama, s.umur, s.kelas
+        FROM santri s
+        join presensi pk
+        on s.id = pk.id
+        where pk.id = #{idKegiatan};
+    </select>
+    
+    <select id="findAllSantri" resultMap="SantriResultMap">
+        SELECT id, nama_santri, umur, kelas, username, password FROM santri ORDER BY id
+    </select>
+
+    <select id="findSantri" resultMap="SantriResultMap">
+        SELECT id, nama_santri, umur, kelas, username, password FROM santri WHERE id = #{id}
+    </select>
+
+    <select id="findByName"  resultMap="SantriResultMap">
+        SELECT * FROM santri WHERE santri.nama_santri ILIKE CONCAT('%', #{santri.nama} ,'%')
+    </select>
+
+    <select id="findByUsername"  resultMap="SantriResultMap">
+        SELECT * FROM santri WHERE santri.username LIKE #{santri.username}
+    </select>
+
+    <select id="findByNameOrKelas"  resultMap="SantriResultMap">
+        SELECT * FROM santri WHERE santri.nama_santri ILIKE CONCAT('%', #{nama} ,'%') OR
+        santri.kelas LIKE CONCAT('%', #{kelas} ,'%')
+    </select>
+
+    <select id="findByAge" resultMap="SantriResultMap">
+        SELECT * FROM santri WHERE umur = #{umur}
+    </select>
+
+    <select id="findSantriKehadiran" resultType="SantriKehadiranGet">
+        SELECT
+        santri.id AS santriId,
+        santri.nama_santri AS santriNama,
+        santri.umur,
+        santri.kelas,
+        kegiatan.nama_kegiatan AS kegiatanNama,
+        kegiatan.tanggal,
+        presensi.status AS status
+        FROM
+        santri
+        JOIN
+        presensi ON santri.id = presensi.id_santri
+        JOIN
+        kegiatan ON presensi.id_kegiatan = kegiatan.id
+        ORDER BY
+        santri.id, kegiatan.id;
+    </select>
+
+
+    <insert id="insertSantri" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO santri (nama_santri, umur, kelas, username, password)
+        values
+        (#{nama}, #{umur}, #{kelas}, #{username}, #{password})
+    </insert>
+
+    <update id="updateSantri" parameterType="com.codean.mybatispesantren.model.entity.Santri">
+        update santri set nama_santri = #{nama}, umur = #{umur}, kelas = #{kelas},
+        username = #{username}, password= #{password}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteSantri">
+        DELETE FROM santri WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.mybatispesantren.mapper.KegiatanMapper">
+
+    <resultMap id="KegiatanResultMap" type="com.codean.mybatispesantren.model.entity.Kegiatan">
+        <id column="id" property="id"/>
+        <result column="nama_kegiatan" property="nama"/>
+        <result column="tanggal" property="tanggal"/>
+    </resultMap>
+
+    <resultMap id="KegiatanSimpleResultMap" type="Kegiatan">
+        <result column="nama_kegiatan"  property="nama"  />
+        <result column="tanggal"  property="tanggal"  />
+    </resultMap>
+
+    <select id="getAll" resultMap="KegiatanResultMap">
+        SELECT id, nama_kegiatan, tanggal FROM kegiatan ORDER BY id
+    </select>
+
+
+<!--    <resultMap id="KegiatanListMap" type="com.codean.mybatispesantren.model.dtos.kegiatan.KegiatanDTO">-->
+<!--        <id property="id" column="id"/>-->
+<!--        <result property="nama" column="nama_kegiatan"/>-->
+<!--        <result property="tanggal" column="tanggal"/>-->
+<!--        <association property="santriDTO" javaType="ArrayList">-->
+<!--            <id property="id" column="id"/>-->
+<!--            <result property="nama" column="nama_santri"/>-->
+<!--            <result property="umur" column="umur"/>-->
+<!--            <result property="kelas" column="kelas"/>-->
+<!--        </association>-->
+<!--        <association property="presensiList" javaType="ArrayList">-->
+<!--            <id property="id" column="id"/>-->
+<!--            <result property="id_santri" column="id_santri"/>-->
+<!--            <result property="id_kegiatan" column="id_kegiatan"/>-->
+<!--            <result property="status" column="status"/>-->
+<!--        </association>-->
+<!--    </resultMap>-->
+
+    <resultMap id="KegiatanListMap" type="com.codean.mybatispesantren.model.dtos.kegiatan.KegiatanDTO">
+        <id property="id" column="id"/>
+        <result property="nama" column="nama_kegiatan"/>
+        <result property="tanggal" column="tanggal_kegiatan"/>
+        <collection property="santriDTO" ofType="com.codean.mybatispesantren.model.dtos.santri.SantriDTO">
+            <id property="id" column="id_santri"/>
+            <result property="nama" column="nama_santri"/>
+            <result property="umur" column="umur_santri"/>
+        </collection>
+        <collection property="presensiList" ofType="com.codean.mybatispesantren.model.entity.Presensi">
+            <id property="id" column="id"/>
+            <result property="idSantri" column="id_santri"/>
+            <result property="idKegiatan" column="id_kegiatan"/>
+            <result property="status" column="status"/>
+        </collection>
+    </resultMap>
+
+    <select id="findAllKegiatan" resultMap="KegiatanListMap">
+        SELECT  p.id, p.id_santri, p.id_kegiatan, p.status,
+        s.nama_santri AS nama_santri, s.umur AS umur_santri,
+        k.nama_kegiatan, k.tanggal AS tanggal_kegiatan
+        FROM presensi p
+        JOIN santri s ON p.id_santri = s.id
+        JOIN kegiatan k ON p.id_kegiatan = k.id
+        WHERE p.id_kegiatan = #{id}
+        ORDER BY p.id_kegiatan;
+    </select>
+
+    <select id="findKegiatan" resultMap="KegiatanResultMap">
+        SELECT id, nama_kegiatan, tanggal FROM kegiatan WHERE id = #{idKegiatan}
+    </select>
+
+    <select id="findByName" resultMap="KegiatanResultMap">
+        SELECT id, nama_kegiatan, tanggal FROM kegiatan
+        WHERE kegiatan.nama_kegiatan ILIKE CONCAT('%', #{nama} ,'%')
+    </select>
+
+    <select id="findByDate" resultMap="KegiatanResultMap">
+        SELECT id, nama_kegiatan, tanggal FROM kegiatan
+        WHERE tanggal BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <select id="findDetailKegiatan" resultMap="KegiatanListMap">
+        SELECT k.id, k.nama_kegiatan, k.tanggal,
+        s.id, s.nama_santri,
+        s.umur, s.kelas
+        FROM kegiatan k
+        LEFT JOIN presensi pk
+        ON k.id = pk.id
+        LEFT JOIN santri s
+        ON pk.id = s.id
+        WHERE k.id = #{idKegiatan}
+    </select>
+
+    <select id="findSantriById" resultMap="KegiatanResultMap">
+        SELECT k.nama_kegiatan, k.tanggal
+        FROM kegiatan k
+        JOIN presensi pk
+        ON k.id= pk.id
+        WHERE pk.id = #{idSantri}
+    </select>
+
+    <insert id="insertKegiatan" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO kegiatan (nama_kegiatan, tanggal)
+        values
+        (#{nama}, #{tanggal})
+    </insert>
+
+    <update id="updateKegiatan">
+        update kegiatan set nama_kegiatan = #{nama}, tanggal = #{tanggal}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteKegiatan">
+        DELETE FROM kegiatan WHERE id = #{id}
+    </delete>
+
+</mapper>

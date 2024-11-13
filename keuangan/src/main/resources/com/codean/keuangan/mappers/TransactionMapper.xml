@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.keuangan.mappers.TransactionMapper">
+
+    <resultMap id="TransactionResultMap" type="com.codean.keuangan.models.entity.Transaction">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="accountId" column="account_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="transactionTypeId" column="transaction_type_id"/>
+        <result property="date" column="date"/>
+        <result property="description" column="description"/>
+        <result property="amount" column="amount"/>
+    </resultMap>
+
+    <select id="getAllByPage"  resultType="com.codean.keuangan.models.dtos.pageresult.TransactionPagination">
+        SELECT id, user_id, account_id, category_id, transaction_type_id,
+        date, description, amount
+        FROM transaction
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="searchByDate" resultMap="TransactionResultMap">
+        SELECT id, user_id, account_id, category_id, transaction_type_id,
+        date, description, amount
+        FROM transaction
+        WHERE transaction.date BETWEEN #{startDate} AND #{endDate};
+    </select>
+
+    <select id="searchByAmount" resultMap="TransactionResultMap">
+        SELECT id, user_id, account_id, category_id, transaction_type_id,
+        date, description, amount
+        FROM transaction
+        WHERE transaction.amount BETWEEN #{startAmount} AND #{endAmount};
+    </select>
+
+    <select id="searchByDescription" resultMap="TransactionResultMap">
+        SELECT id, user_id, account_id, category_id, transaction_type_id,
+        date, description, amount
+        FROM transaction
+        WHERE transaction.description ILIKE CONCAT ('%',#{description},'%');
+    </select>
+
+    <select id="getByFilter" resultType="com.codean.keuangan.models.dtos.resultmodel.TransactionFilter">
+        SELECT u.username,
+        t.date,
+        t.description,
+        t.amount,
+        c.name
+        FROM transaction t
+        LEFT JOIN category c ON t.category_id = c.id
+        LEFT JOIN users u ON t.user_id = u.id
+        WHERE u.username = #{username}
+        AND c.name = #{name}
+        AND  t.date BETWEEN #{startDate} AND #{endDate}
+        AND t.amount BETWEEN #{startAmount} AND #{endAmount}
+
+        UNION ALL
+
+        SELECT 'NULL' AS username,
+        NULL AS date,
+        'total_amount' AS description,
+        SUM(t.amount) AS amount,
+        NULL AS name
+        FROM transaction t
+        LEFT JOIN category c ON t.category_id = c.id
+        LEFT JOIN users u ON t.user_id = u.id
+        WHERE u.username = #{username}
+        AND c.name = #{name}
+        AND  t.date BETWEEN #{startDate} AND #{endDate}
+        AND t.amount BETWEEN #{startAmount} AND #{endAmount}
+    </select>
+    
+    <select id="countTransactions" resultType="long">
+        SELECT COUNT(*)
+        FROM transaction
+    </select>
+
+    <select id="getAll" resultMap="TransactionResultMap">
+        select id, user_id, account_id, category_id, transaction_type_id,
+        date, description, amount
+        FROM transaction ORDER BY id;
+    </select>
+
+    <select id="getId" resultMap="TransactionResultMap">
+        select id, user_id, account_id, category_id, transaction_type_id,
+        date, description, amount
+        FROM transaction WHERE id = #{id}
+    </select>
+
+    <insert id="create">
+        INSERT INTO transaction (user_id, account_id, category_id, transaction_type_id,
+        date, description, amount)
+        VALUES
+        (#{userId}, #{accountId}, #{categoryId}, #{transactionTypeId},
+        #{date}, #{description}, #{amount})
+    </insert>
+
+    <update id="update">
+        UPDATE transaction SET user_id = #{userId}, account_id = #{accountId},
+        category_id = #{categoryId}, transaction_type_id = #{transactionTypeId},
+        date = #{date}, description = #{description}, amount = #{amount}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM transaction WHERE id = #{id}
+    </delete>
+
+
+</mapper>

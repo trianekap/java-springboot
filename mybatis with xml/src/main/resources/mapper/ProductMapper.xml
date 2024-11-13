@@ -1,0 +1,28 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mybatis.mapper.ProductMapper">
+    <resultMap id="ProductResultMap" type="Product">
+          <id column="id" property="id"/>
+          <result column="name" property="name" />
+          <result column="price" property="price" />
+    </resultMap>
+    
+    <select id="findAllProduct" resultMap="ProductResultMap">
+        SELECT id, name, price FROM product ORDER BY id
+    </select>
+    
+    <insert id="createProduct">
+        INSERT INTO product (id, name, price) values(#{id}, #{name}, #{price})
+    </insert>
+
+    <update id="updatePrice">
+        UPDATE product SET price = #{price} WHERE id = #{id}
+    </update>
+
+    <delete id="deleteProduct">
+        DELETE FROM product WHERE id = #{id}
+    </delete>
+
+</mapper>

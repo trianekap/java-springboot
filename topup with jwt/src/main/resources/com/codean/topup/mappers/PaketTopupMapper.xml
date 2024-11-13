@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.topup.mappers.PaketTopupMapper">
+
+    <resultMap id="paketTopupResultMap" type="com.codean.topup.models.entity.PaketTopup">
+        <id property="idPaket" column="id_paket"/>
+        <result property="namaPaket" column="nama_paket"/>
+        <result property="idGame" column="id_game"/>
+        <result property="jumlahDiamond" column="jumlah_diamond"/>
+        <result property="harga" column="harga"/>
+        <result property="bonus" column="bonus"/>
+    </resultMap>
+
+    <select id="getAllByPage"  resultMap="paketTopupResultMap">
+        SELECT id_paket, nama_paket, id_game, jumlah_diamond, harga, bonus
+        FROM paket_topup ORDER BY id_paket
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countPaketTopup" resultType="long">
+        SELECT COUNT(*)
+        FROM paket_topup
+    </select>
+
+    <select id="getAll" resultMap="paketTopupResultMap">
+        SELECT id_paket, nama_paket, id_game, jumlah_diamond, harga, bonus FROM paket_topup
+        ORDER BY id_paket
+    </select>
+
+    <select id="getById" resultMap="paketTopupResultMap">
+        SELECT id_paket, nama_paket, id_game, jumlah_diamond, harga, bonus FROM paket_topup
+        WHERE id_paket = #{id}
+    </select>
+
+    <insert id="create">
+        INSERT INTO paket_topup (nama_paket, id_game, jumlah_diamond, harga, bonus)
+        VALUES (#{namaPaket}, #{idGame}, #{jumlahDiamond}, #{harga}, #{bonus})
+    </insert>
+
+    <update id="update">
+        UPDATE paket_topup
+        SET nama_paket = #{namaPaket},
+        id_game = #{idGame},
+        jumlah_diamond = #{jumlahDiamond},
+        harga = #{harga},
+        bonus = #{bonus}
+        WHERE id_paket = #{idPaket}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM paket_topup WHERE id_paket = #{id}
+    </delete>
+
+</mapper>

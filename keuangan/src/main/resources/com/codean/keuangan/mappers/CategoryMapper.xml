@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.keuangan.mappers.CategoryMapper">
+
+    <resultMap id="CategoryResultMap" type="com.codean.keuangan.models.entity.Category">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="getAllByPage"  resultType="com.codean.keuangan.models.dtos.CategoryDto">
+        SELECT id, name
+        FROM category
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countCategory" resultType="long">
+        SELECT COUNT(*)
+        FROM category
+    </select>
+
+    <select id="searchByName" resultMap="CategoryResultMap">
+        SELECT id, name FROM category WHERE category.name ILIKE CONCAT ('%',#{name},'%');
+    </select>
+
+    <select id="getAll" resultMap="CategoryResultMap">
+        select id, name FROM category ORDER BY id;
+    </select>
+
+    <select id="getId" resultMap="CategoryResultMap">
+        select id, name FROM category WHERE id = #{id}
+    </select>
+
+    <insert id="create">
+        INSERT INTO category (name)
+        VALUES
+        (#{name})
+    </insert>
+
+    <update id="update">
+        UPDATE category SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM category WHERE id = #{id}
+    </delete>
+
+
+</mapper>

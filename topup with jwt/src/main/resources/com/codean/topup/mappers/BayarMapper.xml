@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.topup.mappers.BayarMapper">
+
+    <resultMap id="bayarResultMap" type="com.codean.topup.models.entity.Bayar">
+        <id property="idBayar" column="id_bayar"/>
+        <result property="idPaket" column="id_paket"/>
+        <result property="idMethod" column="id_method"/>
+        <result property="idUser" column="id_users"/>
+        <result property="totalBayar" column="total_bayar"/>
+        <result property="idSaldo" column="id_saldo"/>
+    </resultMap>
+
+    <select id="getAllByPage" resultMap="bayarResultMap">
+        select id_bayar, id_paket, id_method, id_users, total_bayar, id_saldo from bayar
+        ORDER BY id_bayar
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countBayar" resultType="long">
+        SELECT COUNT(*)
+        FROM bayar
+    </select>
+
+    <insert id="insert">
+        INSERT INTO bayar (id_paket, id_method, id_users, total_bayar, id_saldo)
+        values
+        (#{idPaket}, #{idMethod}, #{idUser}, #{totalBayar}, #{idSaldo})
+    </insert>
+
+    <select id="getById" resultMap="bayarResultMap">
+        select id_bayar, id_paket, id_method, id_users, total_bayar, id_saldo
+        from bayar
+        where id_bayar = #{id}
+    </select>
+
+    <select id="getAll" resultMap="bayarResultMap">
+        select id_bayar, id_paket, id_method, id_users, total_bayar, id_saldo from bayar
+    </select>
+
+    <delete id="delete">
+        DELETE FROM bayar WHERE id_bayar = #{id}
+    </delete>
+
+</mapper>

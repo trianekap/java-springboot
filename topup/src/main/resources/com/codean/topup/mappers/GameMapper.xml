@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.topup.mappers.GameMapper">
+
+    <resultMap id="gameResultMap" type="com.codean.topup.models.entity.Game">
+        <id property="idGame" column="id_game"/>
+        <result property="namaGame" column="nama_game"/>
+        <result property="jenisGame" column="jenis_game"/>
+    </resultMap>
+
+    <resultMap id="gameResultListMap" type="com.codean.topup.models.dtos.resultmodel.GameDtoList">
+        <result property="namaGame" column="nama_game"/>
+        <result property="mataUang" column="nama_mata_uang"/>
+        <result property="jenisGame" column="jenis_game"/>
+        <collection property="paketTopup" javaType="List" ofType="PaketTopupForResult">
+            <result property="idPaket" column="id_paket"/>
+            <result property="namaPaket" column="nama_paket"/>
+            <result property="jumlahDiamond" column="jumlah_diamond"/>
+            <result property="harga" column="harga"/>
+            <result property="bonus" column="bonus"/>
+        </collection>
+        <collection property="metodePembayaran" javaType="List" ofType="MethodBayarForResult">
+            <result property="idMethod" column="id_method"/>
+            <result property="namaMethod" column="nama_method"/>
+            <result property="biayaTransaksi" column="biaya_transaksi"/>
+        </collection>
+    </resultMap>
+
+    <select id="getDetailGameList" resultMap="gameResultListMap">
+        select g.nama_game, g.jenis_game,
+            mu.nama_mata_uang,
+            p.id_paket, p.nama_paket, p.jumlah_diamond, p.harga, p.bonus,
+            mb.id_method, mb.nama_method, mb.biaya_transaksi
+        from game g
+            inner join paket_topup p
+            on g.id_game = p.id_game
+            inner join bayar b
+            on p.id_paket = b.id_paket
+            inner join method_bayar mb
+            on mb.id_method = b.id_method
+            inner join mata_uang mu
+            on mb.id_mata_uang = mu.id_mata_uang;
+    </select>
+
+    <select id="searchByName" resultMap="gameResultMap">
+        SELECT nama_game FROM game WHERE nama_game LIKE #{namaGame}
+    </select>
+
+    <select id="getAll" resultMap="gameResultMap">
+        SELECT id_game, nama_game, jenis_game FROM game ORDER BY id_game
+    </select>
+
+    <select id="getById" resultMap="gameResultMap">
+        SELECT id_game, nama_game, jenis_game FROM game WHERE id_game = #{id}
+    </select>
+
+    <insert id="create">
+        INSERT INTO game (nama_game, jenis_game)
+        VALUES (#{namaGame}, #{jenisGame})
+    </insert>
+
+    <update id="update">
+        UPDATE game
+        SET nama_game = #{namaGame}, jenis_game = #{jenisGame}
+        WHERE id_game = #{idGame}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM game WHERE id_game = #{id}
+    </delete>
+
+</mapper>

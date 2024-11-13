@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.perpustakaan.mappers.PinjamMapper">
+
+    <resultMap id="PinjamBaseMapper" type="Pinjam">
+        <id property="idPinjam" column="id_pinjam" typeHandler="com.codean.perpustakaan.handlers.UUIDTypeHandler"/>
+        <result property="idAnggota" column="id_anggota" typeHandler="com.codean.perpustakaan.handlers.UUIDTypeHandler"/>
+        <result property="idBuku" column="idBuku" typeHandler="com.codean.perpustakaan.handlers.UUIDTypeHandler"/>
+        <result property="tanggalPinjam" column="tanggal_pinjam"/>
+        <result property="tanggalKembali" column="tanggal_kembali"/>
+    </resultMap>
+
+    <select id="findById" resultMap="PinjamBaseMapper">
+        SELECT id_pinjam, id_anggota, id_buku, tanggal_pinjam, tanggal_kembali FROM pinjam
+        WHERE id_pinjam = #{id};
+    </select>
+
+    <select id="findAll" resultMap="PinjamBaseMapper">
+        SELECT id_pinjam, id_anggota, id_buku, tanggal_pinjam, tanggal_kembali FROM pinjam;
+    </select>
+
+    <update id="update">
+        UPDATE pinjam
+        SET
+        id_anggota = #{idAnggota},
+        id_buku = #{idBuku},
+        tanggal_pinjam = #{tanggalPinjam},
+        tanggal_kembali = #{tangalKembali},
+        WHERE id_pinjam = #{idPinjam};
+    </update>
+
+    <delete id="delete">
+        DELETE FROM pinjam WHERE id_pinjam = #{id};
+    </delete>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="idPinjam">
+        INSERT INTO pinjam (id_anggota, id_buku, tanggal_pinjam)
+        VALUES
+        (#{idAnggota}, #{idBuku}, #{tanggalPinjam})
+    </insert>
+
+
+</mapper>

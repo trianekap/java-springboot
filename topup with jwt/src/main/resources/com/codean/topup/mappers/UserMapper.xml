@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.topup.mappers.UserMapper">
+
+    <resultMap id="userResultMap" type="com.codean.topup.models.entity.User">
+        <id property="idUser" column="id_users"/>
+        <result property="namaUser" column="nama_users"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+    </resultMap>
+
+    <select id="searchByEmailJwt" resultMap="userResultMap">
+        select id_users, email, password FROM users WHERE users.email LIKE #{users.email}
+    </select>
+
+    <select id="getAllByPage" resultMap="userResultMap">
+        SELECT id_users, nama_users, email, password
+        from users ORDER BY id_users
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countUsers" resultType="long">
+        SELECT COUNT(*)
+        FROM users
+    </select>
+
+    <insert id="create">
+        INSERT INTO users (nama_users, email, password)
+        values
+        (#{namaUser}, #{email}, #{password})
+    </insert>
+
+    <select id="getAll" resultMap="userResultMap">
+        select id_users, nama_users, email, password
+        from users ORDER BY id_users
+    </select>
+
+    <select id="getId" resultMap="userResultMap">
+        select id_users, nama_users, email, password
+        from users
+        where id_users = #{id}
+    </select>
+
+    <update id="update">
+        UPDATE users
+        SET nama_users = #{namaUser},
+        email = #{email},
+        password = #{password}
+        WHERE id_users = #{idUser}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM users WHERE id_users = #{id}
+    </delete>
+
+</mapper>

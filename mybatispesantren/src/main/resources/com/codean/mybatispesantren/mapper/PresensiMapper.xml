@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.mybatispesantren.mapper.PresensiMapper">
+
+    <resultMap id="PresensiResultMap" type="Presensi">
+        <id column="id" property="id"/>
+        <result column="nama" property="santri"/>
+        <result column="nama" property="kegiatan"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <insert id="insert">
+        INSERT INTO presensi (id_santri, id_kegiatan, status) VALUES (#{idSantri}, #{idKegiatan}, #{status})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM presensi WHERE id_santri = #{idSantri} AND id_kegiatan = #{idKegiatan}
+    </delete>
+
+    <delete id="deleteBySantri">
+        DELETE FROM presensi
+        WHERE id_santri = #{idSantri}
+    </delete>
+
+    <delete id="deleteByKegiatan">
+        DELETE FROM presensi
+        WHERE id_kegiatan = #{idKegiatan}
+    </delete>
+
+</mapper>

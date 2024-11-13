@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.topup.mappers.MethodBayarMapper">
+
+    <resultMap id="methodBayarResultMap" type="com.codean.topup.models.entity.MethodBayar">
+        <id property="idMethod" column="id_method"/>
+        <result property="namaMethod" column="nama_method"/>
+        <result property="biayaTransaksi" column="biaya_transaksi"/>
+        <result property="idMataUang" column="id_mata_uang"/>
+    </resultMap>
+
+    <select id="getAllByPage"  resultMap="methodBayarResultMap">
+        SELECT id_method, nama_method, biaya_transaksi, id_mata_uang
+        FROM method_bayar ORDER BY id_method
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countMethodBayar" resultType="long">
+        SELECT COUNT(*)
+        FROM method_bayar
+    </select>
+
+    <select id="getAll" resultMap="methodBayarResultMap">
+        SELECT id_method, nama_method, biaya_transaksi, id_mata_uang
+        FROM method_bayar ORDER BY id_method
+    </select>
+
+    <select id="getById" resultMap="methodBayarResultMap">
+        SELECT id_method, nama_method, biaya_transaksi, id_mata_uang
+        FROM method_bayar
+        WHERE id_method = #{id}
+    </select>
+
+    <insert id="create">
+        INSERT INTO method_bayar (nama_method, biaya_transaksi, id_mata_uang)
+        VALUES (#{namaMethod}, #{biayaTransaksi}, #{idMataUang})
+    </insert>
+
+    <update id="update">
+        UPDATE method_bayar
+        SET nama_method = #{namaMethod},
+        biaya_transaksi = #{biayaTransaksi},
+        id_mata_uang = #{idMataUang}
+        WHERE id_method = #{idMethod}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM method_bayar WHERE id_method = #{id}
+    </delete>
+
+</mapper>

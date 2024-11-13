@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.topup.mappers.SaldoMapper">
+
+    <resultMap id="saldoResultMap" type="com.codean.topup.models.entity.Saldo">
+        <id property="idSaldo" column="id_saldo"/>
+        <result property="jenisSaldo" column="jenis_saldo"/>
+        <result property="jumlahSaldo" column="jumlah_saldo"/>
+        <result property="idUser" column="id_users"/>
+    </resultMap>
+
+    <insert id="create">
+        INSERT INTO saldo (jenis_saldo, jumlah_saldo, id_users)
+        values
+        (#{jenisSaldo}, #{jumlahSaldo}, #{idUser})
+    </insert>
+
+    <select id="getAllByPage"  resultMap="saldoResultMap">
+        select id_saldo, jenis_saldo, jumlah_saldo, id_users
+        from saldo ORDER BY id_saldo
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countSaldo" resultType="long">
+        SELECT COUNT(*)
+        FROM saldo
+    </select>
+
+    <select id="getAll" resultMap="saldoResultMap">
+        select id_saldo, jenis_saldo, jumlah_saldo, id_users
+        from saldo ORDER BY id_saldo
+    </select>
+
+    <select id="getId" resultMap="saldoResultMap">
+        select id_saldo, jenis_saldo, jumlah_saldo, id_users
+        from saldo
+        where id_saldo = #{id}
+    </select>
+
+    <update id="update">
+        UPDATE saldo
+        SET jenis_saldo = #{jenisSaldo},
+        jumlah_saldo = #{jumlahSaldo},
+        id_users = #{idUser}
+        WHERE id_saldo = #{idSaldo}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM saldo WHERE id_saldo = #{id}
+    </delete>
+
+</mapper>

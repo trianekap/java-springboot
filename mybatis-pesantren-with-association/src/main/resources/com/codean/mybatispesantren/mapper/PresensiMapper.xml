@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.mybatispesantren.mapper.PresensiMapper">
+
+    <resultMap id="PresensiResultMap2" type="PresensiDTO">
+        <id column="id" property="id"/>
+        <result column="id_santri" property="id_santri"/>
+        <result column="id_kegiatan" property="id_kegiatan"/>
+        <result column="status" property="status"/>
+
+        <association property="santri" javaType="List">
+            <result property="id" column="id"/>
+            <result property="nama" column="nama_santri"/>
+            <result property="umur" column="umur"/>
+            <result property="kelas" column="kelas"/>
+        </association>
+
+        <association property="kegiatan" javaType="List">
+            <result property="id" column="id"/>
+            <result property="nama" column="nama_kegiatan"/>
+            <result property="tanggal" column="tanggal"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="PresensiResultMap" type="Presensi">
+        <id column="id" property="id"/>
+        <result column="id_santri" property="idSantri"/>
+        <result column="id_kegiatan" property="idKegiatan"/>
+        <result column="status" property="status"/>
+
+        <collection property="santri" javaType="List">
+            <id property="id" column="id"/>
+            <result property="nama" column="nama_santri"/>
+        </collection>
+
+        <collection property="kegiatan" javaType="List">
+            <id property="id" column="id"/>
+            <result property="nama" column="nama_kegiatan"/>
+            <result property="tanggal" column="tanggal"/>
+        </collection>
+    </resultMap>
+
+    <select id="searchPresensi" resultType="com.codean.mybatispesantren.model.dtos.presensi.PresensiDTO">
+        select distinct
+               s.id, s.nama_santri,
+               k.id, k.nama_kegiatan, k.tanggal ,
+               p.status
+        from santri s
+        inner join presensi p
+        on s.id = p.id_santri
+        inner join kegiatan k
+        on k.id = k.id
+        where (s.nama_santri ILIKE '%' || #{key} || '%' OR
+        k.nama_kegiatan ILIKE '%' || #{key} || '%' OR
+        p.status ILIKE '%' || #{key} || '%');
+    </select>
+
+    <select id="findAllPresensi" resultType="com.codean.mybatispesantren.model.dtos.presensi.GetAllPresensi">
+        SELECT  p.id, p.id_santri, p.id_kegiatan, p.status,
+        s.nama_santri AS nama_santri, s.umur AS umur_santri,
+        k.nama_kegiatan AS nama_kegiatan, k.tanggal AS tanggal_kegiatan
+        FROM presensi p
+        JOIN santri s ON p.id_santri = s.id
+        JOIN kegiatan k ON p.id_kegiatan = k.id
+        ORDER BY p.id_kegiatan;
+    </select>
+
+    <insert id="insert">
+        INSERT INTO presensi (id_santri, id_kegiatan, status) VALUES (#{idSantri}, #{idKegiatan}, #{status})
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM presensi WHERE id_santri = #{idSantri} AND id_kegiatan = #{idKegiatan}
+    </delete>
+
+    <delete id="deleteBySantri">
+        DELETE FROM presensi
+        WHERE id_santri = #{idSantri}
+    </delete>
+
+    <delete id="deleteByKegiatan">
+        DELETE FROM presensi
+        WHERE id_kegiatan = #{idKegiatan}
+    </delete>
+
+</mapper>

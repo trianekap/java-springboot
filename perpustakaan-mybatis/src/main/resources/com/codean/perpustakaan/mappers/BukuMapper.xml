@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.perpustakaan.mappers.BukuMapper">
+
+    <resultMap id="BukuBaseMapper" type="Buku">
+        <id property="idBuku" column="id_buku" typeHandler="com.codean.perpustakaan.handlers.UUIDTypeHandler"/>
+        <result property="judul" column="judul"/>
+        <result property="pengarang" column="pengarang"/>
+        <result property="tahunTerbit" column="tahun_terbit"/>
+        <result property="jenisBuku" column="jenis_buku"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <select id="findById" resultMap="BukuBaseMapper">
+        SELECT id_buku, judul, pengarang, tahun_terbit, jenis_buku, status FROM buku
+        WHERE id_buku = #{id};
+    </select>
+
+    <select id="findAll" resultMap="BukuBaseMapper">
+        SELECT id_buku, judul, pengarang, tahun_terbit, jenis_buku, status FROM buku;
+    </select>
+
+    <select id="findByJudul" resultMap="BukuBaseMapper">
+        SELECT * FROM buku a WHERE a.judul = #{judul};
+    </select>
+
+    <select id="findByTahunTerbit" resultMap="BukuBaseMapper">
+        SELECT * FROM buku a WHERE a.tahun_terbit = #{tahunTerbit};
+    </select>
+
+    <update id="update">
+        UPDATE buku
+        SET
+        judul = #{judul},
+        pengarang = #{pengarang},
+        tahun_terbit = #{tahunTerbit},
+        jenis_buku = #{jenisBuku},
+        status = #{status}
+        WHERE id_buku = #{idBuku};
+    </update>
+
+    <delete id="delete">
+        DELETE FROM buku WHERE id_buku = #{id};
+    </delete>
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="idBuku">
+        INSERT INTO buku (judul, pengarang, tahun_terbit, jenis_buku, status)
+        VALUES
+        (#{judul}, #{pengarang}, #{tahunTerbit}, #{jenisBuku}, #{status})
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.mybatispesantren.mapper.KegiatanMapper">
+
+    <resultMap id="KegiatanResultMap" type="Kegiatan">
+        <id column="id" property="id"/>
+        <result column="nama" property="nama" />
+        <result column="tanggal" property="tanggal" />
+    </resultMap>
+
+    <resultMap id="KegiatanSimpleResultMap" type="KegiatanGet">
+        <result column="nama"  property="nama"  />
+        <result column="tanggal"  property="tanggal"  />
+    </resultMap>
+
+    <resultMap id="KegiatanDetailResultMap" type="Kegiatan">
+        <result property = "id" column = "id"/>
+        <result property = "nama" column = "nama"/>
+        <result column="tanggal"  property="tanggal"  />
+        <collection property="listSantri" column="id" javaType="List"
+                    select="com.codean.mybatispesantren.mapper.SantriMapper.findKegiatanById"/>
+    </resultMap>
+
+    <select id="findAllKegiatan" resultMap="KegiatanResultMap">
+        SELECT id, nama, tanggal FROM kegiatan ORDER BY id
+    </select>
+
+    <select id="findKegiatan" resultMap="KegiatanResultMap">
+        SELECT id, nama, tanggal FROM kegiatan WHERE id = #{idKegiatan}
+    </select>
+
+    <select id="findDetailKegiatan" resultMap="KegiatanDetailResultMap">
+        SELECT k.id, k.nama, k.tanggal, s.id, s.nama AS nama_santri
+        FROM kegiatan k
+        LEFT JOIN presensi pk
+        ON k.id = pk.id
+        LEFT JOIN santri s
+        ON pk.id = s.id
+        WHERE k.id = #{idKegiatan} LIMIT 1
+    </select>
+
+    <select id="findSantriById" resultMap="KegiatanSimpleResultMap">
+        SELECT k.nama, k.tanggal
+        FROM kegiatan k
+        JOIN presensi pk
+        ON k.id= pk.id
+        WHERE pk.id = #{idSantri}
+    </select>
+
+    <insert id="insertKegiatan" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO kegiatan (nama, tanggal) values (#{nama}, #{tanggal})
+    </insert>
+
+    <update id="updateKegiatan" parameterType="kegiatan">
+        update kegiatan set nama = #{kegiatan.nama}, tanggal = #{kegiatan.tanggal}
+        WHERE id = #{idKegiatan}
+    </update>
+
+    <delete id="deleteKegiatan">
+        DELETE FROM kegiatan WHERE id = #{id}
+    </delete>
+
+</mapper>

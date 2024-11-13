@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.keuangan.mappers.TransactionTypeMapper">
+
+    <resultMap id="TransactionTypeResultMap" type="com.codean.keuangan.models.entity.TransactionType">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <select id="getAllByPage"  resultType="com.codean.keuangan.models.dtos.TransactionTypeDto">
+        SELECT id, name
+        FROM transaction_type
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countTransactionType" resultType="long">
+        SELECT COUNT(*)
+        FROM transaction_type
+    </select>
+
+    <select id="searchByName" resultMap="TransactionTypeResultMap">
+        SELECT id, name FROM transaction_type WHERE transaction_type.name ILIKE CONCAT ('%',#{name},'%');
+    </select>
+
+    <select id="getAll" resultMap="TransactionTypeResultMap">
+        select id, name FROM transaction_type ORDER BY id;
+    </select>
+
+    <select id="getId" resultMap="TransactionTypeResultMap">
+        select id, name FROM transaction_type WHERE id = #{id}
+    </select>
+
+    <insert id="create">
+        INSERT INTO transaction_type (name)
+        VALUES
+        (#{name})
+    </insert>
+
+    <update id="update">
+        UPDATE transaction_type SET name = #{name}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM transaction_type WHERE id = #{id}
+    </delete>
+
+
+</mapper>

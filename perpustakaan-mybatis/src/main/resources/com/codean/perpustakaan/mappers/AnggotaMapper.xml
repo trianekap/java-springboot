@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org//dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.codean.perpustakaan.mappers.AnggotaMapper">
+    
+    <resultMap id="AnggotaBaseMapper" type="Anggota">
+        <id property="idAnggota" column="id_anggota" typeHandler="com.codean.perpustakaan.handlers.UUIDTypeHandler"/>
+        <result property="nama" column="nama"/>
+        <result property="alamat" column="alamat"/>
+        <result property="kota" column="kota"/>
+        <result property="noTelp" column="no_telp"/>
+        <result property="tanggalLahir" column="tanggal_lahir"/>
+    </resultMap>
+
+    <select id="findById" resultMap="AnggotaBaseMapper">
+        SELECT id_anggota, nama, alamat, kota, no_telp, tanggal_lahir FROM anggota
+                WHERE id_anggota = #{id};
+    </select>
+
+    <select id="findAll" resultMap="AnggotaBaseMapper">
+        SELECT id_anggota, nama, alamat, kota, no_telp, tanggal_lahir FROM anggota;
+    </select>
+
+    <select id="findByName" resultMap="AnggotaBaseMapper">
+        SELECT * FROM anggota a WHERE a.nama = #{nama};
+    </select>
+
+    <update id="update">
+        UPDATE anggota
+        SET
+        nama = #{nama},
+        alamat = #{alamat},
+        kota = #{kota},
+        no_telp = #{noTelp},
+        tanggal_lahir = #{tanggalLahir}
+        WHERE id_anggota = #{idAnggota};
+    </update>
+
+    <delete id="delete">
+        DELETE FROM anggota WHERE id_anggota = #{id};
+    </delete>
+    
+    <insert id="save" useGeneratedKeys="true" keyProperty="idAnggota">
+        INSERT INTO anggota (nama, alamat, kota, no_telp, tanggal_lahir)
+            VALUES
+        (#{nama}, #{alamat}, #{kota}, #{noTelp}, #{tanggalLahir})
+    </insert>
+
+
+</mapper>
